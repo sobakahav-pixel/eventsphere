@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProPage from './pages/ProPage';
 import PricingPage from './pages/PricingPage';
+import VendorPage from './pages/VendorPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 const router = createBrowserRouter([
@@ -15,6 +16,7 @@ const router = createBrowserRouter([
     children: [
       { index: true,           element: <HomePage /> },
       { path: 'catalog',       element: <CatalogPage /> },
+      { path: 'vendor/:id',    element: <VendorPage /> },
       { path: 'login',         element: <LoginPage /> },
       { path: 'register',      element: <RegisterPage /> },
       { path: 'pro',           element: <ProPage /> },

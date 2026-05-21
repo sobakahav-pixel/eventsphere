@@ -1,11 +1,14 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { signUp } from '../lib/auth';
 
 export default function RegisterPage() {
   const [role, setRole] = useState('client');
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
   const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }));
 
@@ -14,9 +17,17 @@ export default function RegisterPage() {
     if (!form.name || !form.email || !form.password) { setError('Заповніть усі поля'); return; }
     if (form.password.length < 6) { setError('Пароль — мінімум 6 символів'); return; }
     setLoading(true); setError('');
-    await new Promise(r => setTimeout(r, 1400));
-    setLoading(false);
-    setError('Бекенд ще в розробці — незабаром! 🚀');
+    try {
+      await signUp({ ...form, role });
+      setSuccess(true);
+      setTimeout(() => navigate('/'), 2000);
+    } catch (err) {
+      setError(err.message === 'Supabase не налаштовано'
+        ? 'Бекенд підключається — незабаром! 🚀'
+        : err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -57,6 +68,7 @@ export default function RegisterPage() {
             <label className="af-label mono">Пароль</label>
             <input className="af-input" type="password" placeholder="мінімум 6 символів" value={form.password} onChange={set('password')} />
           </div>
+          {success && <div className="af-error" style={{background:'rgba(77,224,181,0.12)', borderColor:'var(--mint)', color:'var(--mint)'}}>✅ Акаунт створено! Перевір пошту для підтвердження.</div>}
           {error && <div className="af-error">{error}</div>}
           <button className="btn-pop" type="submit" disabled={loading} style={{width:'100%', justifyContent:'center'}}>
             {loading ? <span>Реєструємося...</span> : <><span className="bp-spark">✨</span><span>Зареєструватись</span><span className="bp-arrow">→</span></>}

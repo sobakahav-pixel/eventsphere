@@ -1,21 +1,29 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { signIn } from '../lib/auth';
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }));
 
   const submit = async e => {
     e.preventDefault();
     if (!form.email || !form.password) { setError('Заповніть усі поля'); return; }
-    setLoading(true);
-    setError('');
-    await new Promise(r => setTimeout(r, 1200));
-    setLoading(false);
-    setError('Бекенд ще в розробці — незабаром! 🚀');
+    setLoading(true); setError('');
+    try {
+      await signIn(form);
+      navigate('/');
+    } catch (err) {
+      setError(err.message === 'Supabase не налаштовано'
+        ? 'Бекенд підключається — незабаром! 🚀'
+        : err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
