@@ -1,26 +1,29 @@
-import Nav from './components/Nav';
-import Hero from './components/Hero';
-import Bento from './components/Bento';
-import Constructor from './components/Constructor';
-import Planner from './components/Planner';
-import SmartMatch from './components/SmartMatch';
-import Daily from './components/Daily';
-import Pro from './components/Pro';
-import Footer from './components/Footer';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Layout from './components/Layout';
+import HomePage from './pages/HomePage';
+import CatalogPage from './pages/CatalogPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import ProPage from './pages/ProPage';
+import PricingPage from './pages/PricingPage';
+import NotFoundPage from './pages/NotFoundPage';
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Layout />,
+    children: [
+      { index: true,           element: <HomePage /> },
+      { path: 'catalog',       element: <CatalogPage /> },
+      { path: 'login',         element: <LoginPage /> },
+      { path: 'register',      element: <RegisterPage /> },
+      { path: 'pro',           element: <ProPage /> },
+      { path: 'pro/pricing',   element: <PricingPage /> },
+      { path: '*',             element: <NotFoundPage /> },
+    ],
+  },
+], { basename: '/eventsphere' });
 
 export default function App() {
-  return (
-    <>
-      <a id="top" />
-      <Nav />
-      <Hero />
-      <Bento />
-      <Constructor />
-      <Planner />
-      <SmartMatch />
-      <Daily />
-      <Pro />
-      <Footer />
-    </>
-  );
+  return <RouterProvider router={router} />;
 }

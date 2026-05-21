@@ -9,6 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   </head>
   <body>
+    <script>
+      (function(){var p=new URLSearchParams(location.search).get('p');if(p){history.replaceState(null,'',location.pathname.replace(/\/$/,'')+decodeURIComponent(p));}})();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
