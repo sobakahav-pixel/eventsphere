@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { CAT_UK } from './CatalogPage';
+import { supabase } from '../lib/supabase';
+import { useAuth } from '../context/AuthContext';
 
 const VENDORS_DB = {
-  1:  { name:'Forest Hall',       cat:'Локація',    city:'Київ',   rating:4.9, reviews:142, price:'від ₴18 000', emoji:'🏛', tone:'magenta', tag:'Топ вибір',
+  1:  { name:'Forest Hall',       cat:'venue',    city:'Київ',   rating:4.9, reviews:142, price:'від ₴18 000', emoji:'🏛', tone:'magenta', tag:'Топ вибір',
         desc:'Елегантний простір у серці Києва для весіль та корпоративів. 3 зали до 300 гостей, власний сад, повна технічна підтримка.',
         tags:['Весілля','Корпоратив','Прийоми'], capacity:'до 300 гостей', area:'1 200 м²',
         gallery:['🏛','🌿','🕯','🎊','🌸','✨'],
@@ -11,7 +14,7 @@ const VENDORS_DB = {
           { name:'Іван С.', date:'Березень 2026', text:'Провели корпоратив на 120 осіб. Логістика, кейтеринг, звук — все на найвищому рівні.', rating:5 },
           { name:'Оля П.', date:'Лютий 2026', text:'Трохи дорого, але воно того варте. Атмосфера неперевершена.', rating:4 },
         ]},
-  4:  { name:'Olha Tkach',        cat:'Фотограф',   city:'Київ',   rating:5.0, reviews:213, price:'від ₴8 500', emoji:'📷', tone:'violet', tag:'Улюблений',
+  4:  { name:'Olha Tkach',        cat:'photo',   city:'Київ',   rating:5.0, reviews:213, price:'від ₴8 500', emoji:'📷', tone:'violet', tag:'Улюблений',
         desc:'Документальна весільна фотографія. Знімаю справжні емоції, а не постановку. 10 років досвіду, 200+ весіль по Україні та Європі.',
         tags:['Весілля','Love story','Репортаж'], capacity:'будь-який', area:'виїзд',
         gallery:['📷','🎞','🌅','💍','🥂','🌷'],
@@ -20,7 +23,7 @@ const VENDORS_DB = {
           { name:'Катя Р.', date:'Квітень 2026', text:'Працювала на love story. Результат перевершив усі очікування!', rating:5 },
           { name:'Вова & Ліна', date:'Березень 2026', text:'Непомітна під час зйомки, але кожен кадр — шедевр.', rating:5 },
         ]},
-  6:  { name:'Hum Catering',      cat:'Кейтеринг',  city:'Київ',   rating:4.8, reviews:176, price:'від ₴450/ос', emoji:'🍽', tone:'gold', tag:'Топ вибір',
+  6:  { name:'Hum Catering',      cat:'food',  city:'Київ',   rating:4.8, reviews:176, price:'від ₴450/ос', emoji:'🍽', tone:'gold', tag:'Топ вибір',
         desc:'Гастрономія з любов\'ю до деталей. Сезонне меню, фермерські продукти, майстри-кухарі. Від мінімалістичних фуршетів до повноцінних банкетів.',
         tags:['Банкет','Фуршет','Кава-брейк'], capacity:'20–500 гостей', area:'виїзд',
         gallery:['🍽','🥗','🍷','🎂','🫙','🌿'],
@@ -29,7 +32,7 @@ const VENDORS_DB = {
           { name:'Родина Шевченко', date:'Березень 2026', text:'Весілля на 80 гостей. Торт — просто казка. Гості досі згадують.', rating:5 },
           { name:'Катя О.', date:'Лютий 2026', text:'Невелика вечірка 30 осіб. Дорого, але якість відповідає.', rating:4 },
         ]},
-  8:  { name:'Brass & Velvet',    cat:'Гурт',       city:'Київ',   rating:4.9, reviews:132, price:'від ₴14 000', emoji:'🎷', tone:'peach', tag:'Хіт',
+  8:  { name:'Brass & Velvet',    cat:'music',       city:'Київ',   rating:4.9, reviews:132, price:'від ₴14 000', emoji:'🎷', tone:'peach', tag:'Хіт',
         desc:'Джаз, соул, фанк — живий звук, що створює атмосферу. 5 музикантів, власний репертуар 200+ треків, можлива адаптація під запит.',
         tags:['Весілля','Корпоратив','Концерт'], capacity:'до 500 гостей', area:'виїзд',
         gallery:['🎷','🥁','🎹','🎸','🎺','🎵'],
@@ -41,7 +44,7 @@ const VENDORS_DB = {
 };
 
 const DEFAULT_VENDOR = {
-  name:'Виконавець', cat:'Категорія', city:'Україна', rating:4.8, reviews:0, price:'за домовленістю',
+  name:'Виконавець', cat:'all', city:'Україна', rating:4.8, reviews:0, price:'за домовленістю',
   emoji:'⭐', tone:'gold', desc:'Детальна інформація оновлюється.',
   tags:[], capacity:'', area:'', gallery:['⭐','✨','🎉'],
   reviews_list:[],
@@ -54,16 +57,35 @@ function Stars({ n }) {
 export default function VendorPage() {
   const { id } = useParams();
   const v = VENDORS_DB[+id] || DEFAULT_VENDOR;
+  const { user } = useAuth() ?? {};
   const [tab, setTab] = useState('about');
   const [form, setForm] = useState({ date:'', guests:'', message:'' });
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState('');
 
   const set = k => e => setForm(f => ({...f, [k]: e.target.value}));
 
   const submit = async e => {
     e.preventDefault();
-    await new Promise(r => setTimeout(r, 800));
-    setSent(true);
+    setError('');
+    try {
+      if (supabase) {
+        const { error } = await supabase.from('requests').insert({
+          vendor_id: +id,
+          vendor_name: v.name,
+          user_id: user?.id ?? null,
+          user_email: user?.email ?? null,
+          event_date: form.date || null,
+          guests: form.guests ? +form.guests : null,
+          message: form.message,
+          status: 'new',
+        });
+        if (error) throw error;
+      }
+      setSent(true);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
@@ -74,7 +96,7 @@ export default function VendorPage() {
           <div className="vp-breadcrumb">
             <Link to="/catalog">← Каталог</Link>
             <span className="dim">/</span>
-            <span>{v.cat}</span>
+            <span>{CAT_UK[v.cat] || v.cat}</span>
           </div>
           <div className="vp-hero-main">
             <div className="vp-emoji">{v.emoji}</div>
@@ -82,7 +104,7 @@ export default function VendorPage() {
               {v.tag && <span className="vcard-tag mono" style={{position:'static', marginBottom:10}}>{v.tag}</span>}
               <h1 className="vp-name">{v.name}</h1>
               <div className="vp-meta">
-                <span className="vp-cat mono">{v.cat}</span>
+                <span className="vp-cat mono">{CAT_UK[v.cat] || v.cat}</span>
                 <span className="dim">·</span>
                 <span>📍 {v.city}</span>
                 <span className="dim">·</span>
@@ -180,6 +202,7 @@ export default function VendorPage() {
                   <label className="af-label mono">Повідомлення</label>
                   <textarea className="af-input" rows="4" placeholder="Розкажіть про вашу подію..." value={form.message} onChange={set('message')} style={{resize:'vertical'}} />
                 </div>
+                {error && <div className="af-error">{error}</div>}
                 <button className="btn-pop" type="submit" style={{width:'100%', justifyContent:'center'}}>
                   <span className="bp-spark">✨</span><span>Надіслати</span><span className="bp-arrow">→</span>
                 </button>

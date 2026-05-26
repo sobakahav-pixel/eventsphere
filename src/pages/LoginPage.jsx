@@ -49,6 +49,7 @@ export default function LoginPage() {
             <label className="af-label mono">Пароль</label>
             <input className="af-input" type="password" placeholder="••••••••" value={form.password} onChange={set('password')} />
             <Link to="/forgot-password" className="af-forgot">Забули пароль?</Link>
+
           </div>
           {error && <div className="af-error">{error}</div>}
           <button className="btn-pop" type="submit" disabled={loading} style={{width:'100%', justifyContent:'center'}}>

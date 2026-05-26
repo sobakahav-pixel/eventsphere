@@ -7,8 +7,13 @@
     var l = window.location;
     var base = '/eventsphere';
     var path = l.pathname.replace(base, '') || '/';
-    l.replace(l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-      base + '/?p=' + encodeURIComponent(path + l.search) + l.hash);
+    var search = l.search;
+    var hash = l.hash;
+    l.replace(
+      l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+      base + '/?p=' + encodeURIComponent(path + search) +
+      hash
+    );
   </script>
 </head>
 <body></body>

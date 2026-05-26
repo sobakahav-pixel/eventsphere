@@ -7,6 +7,10 @@ import RegisterPage from './pages/RegisterPage';
 import ProPage from './pages/ProPage';
 import PricingPage from './pages/PricingPage';
 import VendorPage from './pages/VendorPage';
+import AuthCallbackPage from './pages/AuthCallbackPage';
+import CabinetPage from './pages/CabinetPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 const router = createBrowserRouter([
@@ -21,6 +25,10 @@ const router = createBrowserRouter([
       { path: 'register',      element: <RegisterPage /> },
       { path: 'pro',           element: <ProPage /> },
       { path: 'pro/pricing',   element: <PricingPage /> },
+      { path: 'auth/callback',    element: <AuthCallbackPage /> },
+      { path: 'cabinet',          element: <CabinetPage /> },
+      { path: 'forgot-password',  element: <ForgotPasswordPage /> },
+      { path: 'reset-password',   element: <ResetPasswordPage /> },
       { path: '*',             element: <NotFoundPage /> },
     ],
   },

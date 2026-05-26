@@ -13,6 +13,17 @@ const CATEGORIES = [
   { id: 'music', label: 'DJ & гурти',    emoji: '🎶' },
 ];
 
+export const CAT_UK = {
+  venue: 'Локація',
+  show:  'Шоу',
+  food:  'Кейтеринг',
+  photo: 'Фото & відео',
+  decor: 'Декор',
+  host:  'Ведучий',
+  sweet: 'Кондитерська',
+  music: 'DJ & гурти',
+};
+
 const VENDORS = [
   { id:1, name:'Forest Hall', cat:'venue', city:'Київ',   rating:4.9, reviews:142, price:'від ₴18 000', emoji:'🏛', tone:'magenta', tag:'Топ вибір' },
   { id:2, name:'Vila Magnolia', cat:'venue', city:'Київ', rating:4.8, reviews:98,  price:'від ₴24 000', emoji:'🌿', tone:'mint' },
@@ -107,7 +118,7 @@ export default function CatalogPage() {
               <div className="vcard-emoji">{v.emoji}</div>
               <div className="vcard-body">
                 <div className="vcard-name">{v.name}</div>
-                <div className="vcard-city mono">{v.city}</div>
+                <div className="vcard-city mono">{CAT_UK[v.cat] || v.cat} · {v.city}</div>
                 <div className="vcard-footer">
                   <span className="vcard-rating">★ {v.rating} <span className="dim">({v.reviews})</span></span>
                   <span className="vcard-price">{v.price}</span>

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user, logout } = useAuth() ?? {};
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
@@ -45,10 +47,22 @@ export default function Nav() {
         </nav>
 
         <div className="nav-actions">
-          <Link to="/login" className="nav-link">увійти</Link>
-          <Link to="/register" className="btn-pop sm">
-            <span>Створити</span><span className="bp-arrow">→</span>
-          </Link>
+          {user ? (
+            <>
+              <Link to="/cabinet" className="nav-avatar" title={user.email}>
+                <span>{(user.user_metadata?.name || user.email || '?')[0].toUpperCase()}</span>
+              </Link>
+              <Link to="/cabinet" className="nav-link">Кабінет</Link>
+              <button className="btn-line sm" onClick={logout}>Вийти</button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="nav-link">увійти</Link>
+              <Link to="/register" className="btn-pop sm">
+                <span>Створити</span><span className="bp-arrow">→</span>
+              </Link>
+            </>
+          )}
           <button
             className={`burger ${menuOpen ? 'open' : ''}`}
             onClick={() => setMenuOpen(o => !o)}
@@ -65,12 +79,19 @@ export default function Nav() {
             <Link to="/catalog" className="mm-link" onClick={close}>🏛 Каталог</Link>
             <Link to="/pro" className="mm-link" onClick={close}>✨ Pro для бізнесу</Link>
             <Link to="/pro/pricing" className="mm-link" onClick={close}>💰 Тарифи</Link>
+            {user && <Link to="/cabinet" className="mm-link" onClick={close}>👤 Мій кабінет</Link>}
           </nav>
           <div className="mm-actions">
-            <Link to="/login" className="btn-line" style={{justifyContent:'center'}} onClick={close}>Увійти</Link>
-            <Link to="/register" className="btn-pop" style={{justifyContent:'center'}} onClick={close}>
-              <span className="bp-spark">✨</span><span>Зареєструватись</span><span className="bp-arrow">→</span>
-            </Link>
+            {user ? (
+              <button className="btn-line" style={{justifyContent:'center'}} onClick={() => { logout(); close(); }}>Вийти з акаунту</button>
+            ) : (
+              <>
+                <Link to="/login" className="btn-line" style={{justifyContent:'center'}} onClick={close}>Увійти</Link>
+                <Link to="/register" className="btn-pop" style={{justifyContent:'center'}} onClick={close}>
+                  <span className="bp-spark">✨</span><span>Зареєструватись</span><span className="bp-arrow">→</span>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
