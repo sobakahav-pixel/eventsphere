@@ -758,6 +758,9 @@ em {
 .cab-req-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--line); }
 .cab-req-row:last-of-type { border-bottom: 0; }
 .cab-req-msg { font-size: 13px; color: var(--muted); margin: 0; padding-top: 6px; border-top: 1px solid var(--line); line-height: 1.6; }
+.cab-status-select { background: rgba(255,245,230,0.06); border: 1px solid var(--line-2); border-radius: 8px; padding: 4px 10px; font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; cursor: pointer; outline: none; transition: border-color .2s; }
+.cab-status-select:hover { border-color: var(--gold); }
+.cab-status-select option { background: #1B0A36; color: var(--fg); text-transform: none; }
 
 /* ─── Burger / Mobile Menu ───────────────────────────────────────────────── */
 .burger {

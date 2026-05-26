@@ -1,35 +1,41 @@
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Layout from './components/Layout';
-import HomePage from './pages/HomePage';
-import CatalogPage from './pages/CatalogPage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import ProPage from './pages/ProPage';
-import PricingPage from './pages/PricingPage';
-import VendorPage from './pages/VendorPage';
-import AuthCallbackPage from './pages/AuthCallbackPage';
-import CabinetPage from './pages/CabinetPage';
-import ForgotPasswordPage from './pages/ForgotPasswordPage';
-import ResetPasswordPage from './pages/ResetPasswordPage';
-import NotFoundPage from './pages/NotFoundPage';
+
+const HomePage        = lazy(() => import('./pages/HomePage'));
+const CatalogPage     = lazy(() => import('./pages/CatalogPage'));
+const VendorPage      = lazy(() => import('./pages/VendorPage'));
+const LoginPage       = lazy(() => import('./pages/LoginPage'));
+const RegisterPage    = lazy(() => import('./pages/RegisterPage'));
+const ProPage         = lazy(() => import('./pages/ProPage'));
+const PricingPage     = lazy(() => import('./pages/PricingPage'));
+const AuthCallbackPage   = lazy(() => import('./pages/AuthCallbackPage'));
+const CabinetPage        = lazy(() => import('./pages/CabinetPage'));
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'));
+const ResetPasswordPage  = lazy(() => import('./pages/ResetPasswordPage'));
+const NotFoundPage       = lazy(() => import('./pages/NotFoundPage'));
+
+function PageLoader() {
+  return <div className="auth-page"><div style={{ fontSize: 40, opacity: .4 }}>⏳</div></div>;
+}
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <Layout />,
     children: [
-      { index: true,           element: <HomePage /> },
-      { path: 'catalog',       element: <CatalogPage /> },
-      { path: 'vendor/:id',    element: <VendorPage /> },
-      { path: 'login',         element: <LoginPage /> },
-      { path: 'register',      element: <RegisterPage /> },
-      { path: 'pro',           element: <ProPage /> },
-      { path: 'pro/pricing',   element: <PricingPage /> },
-      { path: 'auth/callback',    element: <AuthCallbackPage /> },
-      { path: 'cabinet',          element: <CabinetPage /> },
-      { path: 'forgot-password',  element: <ForgotPasswordPage /> },
-      { path: 'reset-password',   element: <ResetPasswordPage /> },
-      { path: '*',             element: <NotFoundPage /> },
+      { index: true,           element: <Suspense fallback={<PageLoader />}><HomePage /></Suspense> },
+      { path: 'catalog',       element: <Suspense fallback={<PageLoader />}><CatalogPage /></Suspense> },
+      { path: 'vendor/:id',    element: <Suspense fallback={<PageLoader />}><VendorPage /></Suspense> },
+      { path: 'login',         element: <Suspense fallback={<PageLoader />}><LoginPage /></Suspense> },
+      { path: 'register',      element: <Suspense fallback={<PageLoader />}><RegisterPage /></Suspense> },
+      { path: 'pro',           element: <Suspense fallback={<PageLoader />}><ProPage /></Suspense> },
+      { path: 'pro/pricing',   element: <Suspense fallback={<PageLoader />}><PricingPage /></Suspense> },
+      { path: 'auth/callback',    element: <Suspense fallback={<PageLoader />}><AuthCallbackPage /></Suspense> },
+      { path: 'cabinet',          element: <Suspense fallback={<PageLoader />}><CabinetPage /></Suspense> },
+      { path: 'forgot-password',  element: <Suspense fallback={<PageLoader />}><ForgotPasswordPage /></Suspense> },
+      { path: 'reset-password',   element: <Suspense fallback={<PageLoader />}><ResetPasswordPage /></Suspense> },
+      { path: '*',             element: <Suspense fallback={<PageLoader />}><NotFoundPage /></Suspense> },
     ],
   },
 ], { basename: '/eventsphere' });
