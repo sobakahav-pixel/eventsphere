@@ -1,0 +1,1 @@
+async function e({email:e,password:t,name:n,role:r}){throw Error(`Supabase не налаштовано`)}async function t({email:e,password:t}){throw Error(`Supabase не налаштовано`)}export{e as n,t};
