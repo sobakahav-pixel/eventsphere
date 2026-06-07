@@ -65,7 +65,7 @@ export default function CabinetPage() {
 
   const save = async () => {
     if (!supabase) return;
-    await supabase.from('profiles').update({ name: form.name, city: form.city }).eq('id', user.id);
+    await supabase.from('profiles').upsert({ id: user.id, name: form.name, city: form.city, role: profile?.role || 'client' });
     setProfile(p => ({ ...p, ...form }));
     setEditing(false); setSaved(true);
     setTimeout(() => setSaved(false), 3000);
